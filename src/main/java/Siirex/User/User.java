@@ -1,4 +1,4 @@
-package Siirex.User;
+package JustinVu.User;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
