@@ -1,10 +1,30 @@
-package Siirex.User;
+package JustinVu.User;
 
-import javax.validation.Valid;
-
+import com.warrenstrange.googleauth.ICredentialRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+import java.util.List;
 
-    void save(org.apache.catalina.@Valid User user);
+@Repository
+public interface UserRepository extends JpaRepository<User, Long>, ICredentialRepository {
+    User findByEmail(String email);
+
+    @Override
+    default String getSecretKey(String userName) {
+        User user = findByEmail(userName);
+        return (user != null) ? user.getSecret() : null;
+    }
+
+    @Override
+    default void saveUserCredentials(String userName,
+                                     String secretKey,
+                                     int validationCode,
+                                     List<Integer> scratchCodes) {
+        User user = findByEmail(userName);
+        if (user != null) {
+            user.setSecret(secretKey);
+            save(user);
+        }
+    }
 }
